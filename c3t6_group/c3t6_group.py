@@ -16,7 +16,7 @@ class C3T6Item:
 
 
 class C3T6Group:
-    def __init__(self, forming_alphabet: Iterable[C3T6Item], constitutive_relation: Iterable[Tuple[C3T6Item]]):
+    def __init__(self, forming_alphabet: Iterable[C3T6Item], constitutive_relation: Iterable[Tuple[C3T6Item, ...]]):
         self.forming_alphabet = set(forming_alphabet)
         self.constitutive_relation = \
             self.get_all_inverse_relations(self.get_all_permutations(set(constitutive_relation)))

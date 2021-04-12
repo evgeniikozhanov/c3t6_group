@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Tuple, Iterable
+from typing import Tuple, Iterable, List
 
 
 @dataclass
@@ -38,3 +38,16 @@ class C3T6Group:
             constitutive_relation_new.add(
                 tuple([C3T6Item.create_from_another_instance(j, force_reversed=(not j.is_reversed)) for j in cr[::-1]]))
         return constitutive_relation_new.union(constitutive_relation_init)
+
+    def do_simple_cancellation(self, word: Tuple[C3T6Item, ...]):
+        new_word: List[C3T6Item] = list(word)
+        for i in range(len(word)):
+            if word[i].value == word[i - 1].value and word[i].is_reversed != word[i - 1].is_reversed:
+                if i == 0:
+                    new_word = new_word[1:-1]
+                else:
+                    new_word = new_word[:i - 1] + new_word[i + 1:]
+                break
+        else:
+            return word
+        return self.do_simple_cancellation(tuple(new_word))

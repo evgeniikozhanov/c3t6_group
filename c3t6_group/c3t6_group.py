@@ -73,14 +73,19 @@ class C3T6Group:
                 tuple(C3T6Item.create_from_another_instance(j, force_reversed=(not j.is_reversed)) for j in cr[::-1]))
         return constitutive_relations_new
 
-    def do_simple_cancellation(self, word: Tuple[C3T6Item, ...]):
+    @staticmethod
+    def check_cancellation_ability(a: C3T6Item, b: C3T6Item):
+        return a.value == b.value and a.is_reversed != b.is_reversed
+
+    def do_simple_cancellation(self, word: Tuple[C3T6Item, ...]) -> Tuple[C3T6Item, ...]:
         """
+        A simple cancellation: to cut two neighbours, that inversed for each other
 
-
+        Example: abc-a -> bc, ab-bcabc -> acabc
         """
         new_word: List[C3T6Item] = list(word)
         for i in range(len(word)):
-            if word[i].value == word[i - 1].value and word[i].is_reversed != word[i - 1].is_reversed:
+            if self.check_cancellation_ability(word[i], word[i - 1]):
                 if i == 0:
                     new_word = new_word[1:-1]
                 else:

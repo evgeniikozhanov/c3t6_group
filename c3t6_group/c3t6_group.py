@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from itertools import islice, chain
+from itertools import islice, chain, starmap
 from typing import Tuple, Iterable, List, Set
 
 
@@ -55,25 +55,29 @@ class C3T6Group:
 
         Example: {abc, bac} -> {abc, bca, cab, bac, acb, cba}
         """
-        constitutive_relations_new = set()
+        constitutive_relations_new = set(constitutive_relations_init)
         for cr in constitutive_relations_init:
-            for i in range(1, len(cr)):
-                constitutive_relations_new.add(
-                    self.get_new_permutation(cr, i)
-                )
-        return constitutive_relations_new.union(constitutive_relations_init)
+            constitutive_relations_new.update(starmap(self.get_new_permutation, ((cr, i) for i in range(1, len(cr)))))
+        return constitutive_relations_new
 
     @staticmethod
-    def get_all_inverse_relations(constitutive_relations_init):
-        """  """
-        constitutive_relations_new = set()
+    def get_all_inverse_relations(constitutive_relations_init: Set[Tuple[C3T6Item, ...]]) -> Set[Tuple[C3T6Item, ...]]:
+        """
+        Return all inversions (by one inversion of each word)
+
+        Example: {abc, bac} -> {-c-b-a, -c-a-b}
+        """
+        constitutive_relations_new = set(constitutive_relations_init)
         for cr in constitutive_relations_init:
             constitutive_relations_new.add(
-                tuple([C3T6Item.create_from_another_instance(j, force_reversed=(not j.is_reversed)) for j in cr[::-1]]))
-        return constitutive_relations_new.union(constitutive_relations_init)
+                tuple(C3T6Item.create_from_another_instance(j, force_reversed=(not j.is_reversed)) for j in cr[::-1]))
+        return constitutive_relations_new
 
     def do_simple_cancellation(self, word: Tuple[C3T6Item, ...]):
-        """  """
+        """
+
+
+        """
         new_word: List[C3T6Item] = list(word)
         for i in range(len(word)):
             if word[i].value == word[i - 1].value and word[i].is_reversed != word[i - 1].is_reversed:

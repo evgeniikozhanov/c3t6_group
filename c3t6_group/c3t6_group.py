@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from itertools import islice, chain
 from typing import Tuple, Iterable, List, Set
 
 
@@ -43,12 +44,17 @@ class C3T6Group:
         For example, for word abcde and start position 2 it returns cdeab (cde + ab)
         """
         return tuple(
-            [C3T6Item.create_from_another_instance(j) for j in constitutive_relation[permutation_start_position:]] +
-            [C3T6Item.create_from_another_instance(k) for k in constitutive_relation[:permutation_start_position]]
+            C3T6Item.create_from_another_instance(j) for j in
+            chain(islice(constitutive_relation, permutation_start_position, None),
+                  islice(constitutive_relation, 0, permutation_start_position))
         )
 
     def get_all_permutations(self, constitutive_relations_init: Set[Tuple[C3T6Item, ...]]) -> Set[Tuple[C3T6Item, ...]]:
-        """ Return  """
+        """
+        Return all permutations: to collect all permutations of each word
+
+        Example: {abc, bac} -> {abc, bca, cab, bac, acb, cba}
+        """
         constitutive_relations_new = set()
         for cr in constitutive_relations_init:
             for i in range(1, len(cr)):

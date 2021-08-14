@@ -8,11 +8,18 @@ class C3T6Item:
     is_reversed: bool
 
     @classmethod
-    def create_from_another_instance(cls, c3t6_item: 'C3T6Item', force_reversed=False):
+    def create_from_another_instance(cls, c3t6_item: 'C3T6Item', force_reversed=False) -> 'C3T6Item':
+        """
+        This method make an inverse or copy item of concrete C3T6Item. This helps us to get an inverse of the word.
+        Also this helps us to get a permutation of the word.
+        """
         return cls(value=c3t6_item.value, is_reversed=(force_reversed or c3t6_item.is_reversed))
 
     def __hash__(self):
-        return hash(f'{"-" if self.is_reversed else ""}{self.value}')
+        return hash(str())
+
+    def __str__(self):
+        return f'{"-" if self.is_reversed else ""}{self.value}'
 
 
 class C3T6Group:

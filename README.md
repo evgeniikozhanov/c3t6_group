@@ -1,9 +1,12 @@
-# Classes and methods for math groups with C3-T6 conditions
+# Classes and methods for math groups with C(3)-T(6) conditions
 
 -------------
 
-#### The following functionality has been implemented:
+#### C(3) and T(6) conditions.
+Please see the chapter Non-metric small cancellation conditions
+at https://en.wikipedia.org/wiki/Small_cancellation_theory
 
+#### The following functionality has been implemented:
 - an alphabet and constitutive relations of the C3-T6 group are supported
 - when you create a C3-T6 group, all constitutive relations will be generated
 - checking C(3) conditions was added

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Tuple, Iterable, List
+from typing import Tuple, Iterable, List, Set
 
 
 @dataclass
@@ -23,30 +23,51 @@ class C3T6Item:
 
 
 class C3T6Group:
-    def __init__(self, forming_alphabet: Iterable[C3T6Item], constitutive_relation: Iterable[Tuple[C3T6Item, ...]]):
-        self.forming_alphabet = set(forming_alphabet)
-        self.constitutive_relation = \
-            self.get_all_inverse_relations(self.get_all_permutations(set(constitutive_relation)))
+    """
+    group_alphabet - set of all C3-T6 items, which can use to create words
+    constitutive_relations - relations that define words equals 1 (an empty string in our case)
+    """
+
+    def __init__(self, group_alphabet: Iterable[C3T6Item], constitutive_relations: Iterable[Tuple[C3T6Item, ...]]):
+        self.group_alphabet: set = set(group_alphabet)
+        self.constitutive_relations: set = \
+            self.get_all_inverse_relations(self.get_all_permutations(set(constitutive_relations)))
 
     @staticmethod
-    def get_all_permutations(constitutive_relation_init):
-        constitutive_relation_new = set()
-        for cr in constitutive_relation_init:
+    def get_new_permutation(
+            constitutive_relation: Tuple[C3T6Item, ...], permutation_start_position: int
+    ) -> Tuple[C3T6Item, ...]:
+        """
+        Return permutation of the word
+
+        For example, for word abcde and start position 2 it returns cdeab (cde + ab)
+        """
+        return tuple(
+            [C3T6Item.create_from_another_instance(j) for j in constitutive_relation[permutation_start_position:]] +
+            [C3T6Item.create_from_another_instance(k) for k in constitutive_relation[:permutation_start_position]]
+        )
+
+    def get_all_permutations(self, constitutive_relations_init: Set[Tuple[C3T6Item, ...]]) -> Set[Tuple[C3T6Item, ...]]:
+        """ Return  """
+        constitutive_relations_new = set()
+        for cr in constitutive_relations_init:
             for i in range(1, len(cr)):
-                constitutive_relation_new.add(
-                    tuple([C3T6Item.create_from_another_instance(j) for j in cr[i:]] +
-                          [C3T6Item.create_from_another_instance(k) for k in cr[:i]]))
-        return constitutive_relation_new.union(constitutive_relation_init)
+                constitutive_relations_new.add(
+                    self.get_new_permutation(cr, i)
+                )
+        return constitutive_relations_new.union(constitutive_relations_init)
 
     @staticmethod
-    def get_all_inverse_relations(constitutive_relation_init):
-        constitutive_relation_new = set()
-        for cr in constitutive_relation_init:
-            constitutive_relation_new.add(
+    def get_all_inverse_relations(constitutive_relations_init):
+        """  """
+        constitutive_relations_new = set()
+        for cr in constitutive_relations_init:
+            constitutive_relations_new.add(
                 tuple([C3T6Item.create_from_another_instance(j, force_reversed=(not j.is_reversed)) for j in cr[::-1]]))
-        return constitutive_relation_new.union(constitutive_relation_init)
+        return constitutive_relations_new.union(constitutive_relations_init)
 
     def do_simple_cancellation(self, word: Tuple[C3T6Item, ...]):
+        """  """
         new_word: List[C3T6Item] = list(word)
         for i in range(len(word)):
             if word[i].value == word[i - 1].value and word[i].is_reversed != word[i - 1].is_reversed:

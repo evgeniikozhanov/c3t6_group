@@ -31,7 +31,7 @@ class C3T6Group:
 
     def __init__(self, group_alphabet: Iterable[C3T6Item], constitutive_relations: Iterable[Tuple[C3T6Item, ...]]):
         self.group_alphabet: set = set(group_alphabet)
-        self.constitutive_relations: set = \
+        self.constitutive_relations: Set[Tuple[C3T6Item, ...]] = \
             self.get_all_inverse_relations(self.get_all_permutations(set(constitutive_relations)))
 
     @staticmethod
@@ -63,9 +63,9 @@ class C3T6Group:
     @staticmethod
     def get_all_inverse_relations(constitutive_relations_init: Set[Tuple[C3T6Item, ...]]) -> Set[Tuple[C3T6Item, ...]]:
         """
-        Return all inversions (by one inversion of each word)
+        Return all init relations and it`s inversions (by one inversion of each word)
 
-        Example: {abc, bac} -> {-c-b-a, -c-a-b}
+        Example: {abc, bac} -> {abc, bac, -c-b-a, -c-a-b}
         """
         constitutive_relations_new = set(constitutive_relations_init)
         for cr in constitutive_relations_init:
